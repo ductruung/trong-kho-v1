@@ -6,7 +6,10 @@ export async function POST(request: Request, ctx: RouteContext<"/api/orders/chec
   const { data: order } = await 
     supabase
     .from("orders")
-    .update({ status: "checked in" })
+    .update({ 
+      status: "checked in",
+      updated_at: Date.now()
+    })
     .eq("id", id)
     .select();
   
