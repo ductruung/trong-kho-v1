@@ -1,6 +1,6 @@
 import { createClient } from '@/app/utils/supabase/server'
 
-export async function POST(request: Request, ctx: RouteContext<"/api/orders/checkout/[id]">) {
+export async function POST(request: Request, ctx: RouteContext<"/api/orders/checkin/[id]">) {
   const supabase = await createClient();
   const { id } = await ctx.params;
   const { data: order } = await 
