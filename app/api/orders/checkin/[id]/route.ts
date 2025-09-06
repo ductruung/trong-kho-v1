@@ -8,7 +8,7 @@ export async function POST(request: Request, ctx: RouteContext<"/api/orders/chec
     .from("orders")
     .update({ 
       status: "checked in",
-      updated_at: Date.now()
+      updated_at: new Date()
     })
     .eq("id", id)
     .select();
