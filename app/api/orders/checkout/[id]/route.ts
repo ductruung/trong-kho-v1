@@ -1,0 +1,17 @@
+import { createClient } from '@/app/utils/supabase/server'
+
+export async function POST(request: Request, ctx: RouteContext<"/api/orders/checkout/[id]">) {
+  const supabase = await createClient();
+  const { id } = await ctx.params;
+  const { data: order } = await 
+    supabase
+    .from("orders")
+    .update({ status: "checked out" })
+    .eq("id", id)
+    .select();
+  
+  return new Response(JSON.stringify(order), {
+    status: 201,
+    headers: { 'Content-Type': 'application/json' }
+  });
+}
