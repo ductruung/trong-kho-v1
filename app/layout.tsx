@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Raleway } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/ui/theme-provider"
+import { ThemeProvider } from "@/components/ui/theme-provider";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,18 +34,22 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="dark"
-        enableSystem
-        disableTransitionOnChange
+      <body
+        className={`${raleway.variable} ${geistMono.variable} antialiased`}
       >
-        <body
-          className={`${raleway.variable} ${geistMono.variable} antialiased`}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
         >
-          {children}
-        </body>
-      </ThemeProvider>
+          {/* <SidebarProvider> */}
+            {/* <AppSidebar/> */}
+              {/* <SidebarTrigger /> */}
+              {children}
+          {/* </SidebarProvider>   */}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
