@@ -4,6 +4,9 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
+import { Bell } from "lucide-react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,11 +46,22 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {/* <SidebarProvider> */}
-            {/* <AppSidebar/> */}
-              {/* <SidebarTrigger /> */}
-              {children}
-          {/* </SidebarProvider>   */}
+          <header className="z-99 fixed w-screen h-12 border border-b bg-background">
+            <Tooltip>
+              <TooltipTrigger className="my-auto" asChild>
+                <Button variant="outline" size="icon" className="rounded-full border-gray-600">
+                  <Bell size={18} strokeWidth={1.5} />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent className="text-foreground bg-background border border-muted-foreground" arrow={false}>
+                Thông báo
+              </TooltipContent>
+            </Tooltip>
+          </header>
+          <SidebarProvider>
+            <AppSidebar/>
+            {children}
+          </SidebarProvider>  
         </ThemeProvider>
       </body>
     </html>

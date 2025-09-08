@@ -1,4 +1,4 @@
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react"
+import { Shapes, Warehouse, Zap } from "lucide-react"
 
 import {
   Sidebar,
@@ -14,45 +14,34 @@ import {
 // Menu items.
 const items = [
   {
-    title: "Home",
-    url: "#",
-    icon: Home,
+    title: "Tổng quan",
+    url: "",
+    icon: <Shapes size={20}/>,
   },
   {
-    title: "Inbox",
+    title: "Hoạt động",
     url: "#",
-    icon: Inbox,
+    icon: <Zap size={20}/>,
   },
   {
-    title: "Calendar",
+    title: "Kho",
     url: "#",
-    icon: Calendar,
-  },
-  {
-    title: "Search",
-    url: "#",
-    icon: Search,
-  },
-  {
-    title: "Settings",
-    url: "#",
-    icon: Settings,
+    icon: <Warehouse size={20}/>,
   },
 ]
 
 export function AppSidebar() {
   return (
-    <Sidebar variant="floating">
-      <SidebarContent>
+    <Sidebar className="w-12 hover:w-40 duration-80 py-12 bg-background">
+      <SidebarContent className="bg-background">
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
+                <SidebarMenuItem className="text-muted-foreground font-medium" key={item.title}>
                   <SidebarMenuButton asChild>
                     <a href={item.url}>
-                      <item.icon />
+                      {item.icon}
                       <span>{item.title}</span>
                     </a>
                   </SidebarMenuButton>
