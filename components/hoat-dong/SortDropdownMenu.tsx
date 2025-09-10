@@ -5,13 +5,14 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuSeparator, DropdownMenuT
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import { FilterCalendar } from "./FilterCalendar"
+import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu"
 
 export function SortDropdownMenu() {
-  const [filterItems, setFilterItems] = useState([
-    { key: "id", comparator: undefined, value: undefined },
-    { key: "date", comparator: undefined, value: undefined },
-    { key: "time", comparator: undefined, value: undefined },
-    { key: "type", comparator: undefined, value: undefined },
+  const [sortItems, setSortItems] = useState([
+    // { id: "1", column: "id", comparator: undefined, value: undefined },
+    // { id: "2", column: "date", comparator: undefined, value: undefined },
+    // { id: "3", column: "time", comparator: undefined, value: undefined },
+    // { id: "4", column: "type", comparator: undefined, value: undefined },
   ]);
 
   const SortItem = ({ item, key }) => (
@@ -85,25 +86,40 @@ export function SortDropdownMenu() {
       >
         <div className="p-2">
           {
-            filterItems.length === 0 ?
+            sortItems.length === 0 ?
               <div>
-                <p className="text-sm font-semibold text-muted-foreground mb-1.5">Chưa có bộ lọc nào được áp dụng</p>
-                <p className="text-xs text-muted-foreground">Thêm một bộ lọc phía dưới để lọc dữ liệu hoạt động</p>
+                <p className="text-sm font-semibold text-muted-foreground mb-1.5">Chưa có cách sắp xếp nào được áp dụng</p>
+                <p className="text-xs text-muted-foreground">Thêm một tiêu chí sắp xếp phía dưới để sắp xếp dữ liệu hoạt động</p>
               </div>
               :
               <div className="flex flex-col gap-1">
-                {filterItems.map((item, _) => { return <SortItem key={_} item={item} /> })}
+                {sortItems.map((item, _) => { return <SortItem key={_} item={item} /> })}
               </div>
           }
         </div>
         <DropdownMenuSeparator />
         <div className="flex justify-between items-center py-2 px-2">
-          <Button className="text-xs h-fit py-1 rounded-sm cursor-pointer" variant="ghost" size="sm">
-            <Plus className="text-muted-foreground size-[14px]" />
-            Thêm bộ lọc
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              asChild
+            >
+              <Button className="text-xs h-fit py-1 rounded-sm cursor-pointer" variant="ghost" size="sm">
+                <Plus className="text-muted-foreground size-[14px]" />
+                Thêm tiêu chí sắp xếp
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="start"
+              className="flex flex-col p-1 text-xs"
+            >
+              <DropdownMenuItem className="p-1.5 pl-2 hover">Mã</DropdownMenuItem>
+              <DropdownMenuItem className="p-1.5 pl-2 hover">Ngày</DropdownMenuItem>
+              <DropdownMenuItem className="p-1.5 pl-2 hover">Giờ</DropdownMenuItem>
+              <DropdownMenuItem className="p-1.5 pl-2 hover">Loại</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <Button className="text-xs h-fit py-1 rounded-sm cursor-pointer" variant="outline" size="sm">
-            Áp dụng bộ lọc
+            Áp dụng cách sắp xếp
           </Button>
         </div>
       </DropdownMenuContent>

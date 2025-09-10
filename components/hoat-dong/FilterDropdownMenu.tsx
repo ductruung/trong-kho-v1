@@ -1,4 +1,4 @@
-import { useCallback, useId, useState } from "react"
+import { useCallback, useState } from "react"
 import { Plus, Filter } from "lucide-react"
 import { v4 as uuidv4 } from 'uuid'
 import { Button } from "@/components/ui/button"
@@ -7,13 +7,7 @@ import { FilterItemRow } from "./FilterItemRow"
 import { FilterItem } from "./types"
 
 export function FilterDropdownMenu() {
-  const [filterItems, setFilterItems] = useState<FilterItem[]>([
-    { id: "1", key: "id", comparator: "none", value: undefined },
-    { id: "2", key: "date", comparator: "none", value: undefined },
-    { id: "3", key: "time", comparator: "none", value: undefined },
-    { id: "4", key: "type", comparator: "none", value: undefined },
-  ]);
-  const newId = useId(); //for creation of new item
+  const [filterItems, setFilterItems] = useState<FilterItem[]>([]);
   const onKeyChange = useCallback((id: string, key: string) => {
     setFilterItems(prev => prev.map(it => it.id === id ? { ...it, key } : it))
   }, [])
