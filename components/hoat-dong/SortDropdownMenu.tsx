@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { ArrowUpDown, ChevronDown, Plus, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
@@ -23,11 +23,13 @@ import { SortItem } from "./types"
 
 export function SortDropdownMenu() {
   const [sortItems, setSortItems] = useState<SortItem[]>([
-    { id: "a", column: "id", type: "asc" },
-    { id: "b", column: "date", type: "asc" },
-    { id: "c", column: "time", type: "asc" },
-    { id: "d", column: "type", type: "asc" },
+    { id: "a", column: "id", type: "asc", chosen: true },
+    { id: "b", column: "date", type: "asc", chosen: true },
+    { id: "c", column: "time", type: "asc", chosen: true },
+    { id: "d", column: "type", type: "asc", chosen: true },
   ]);
+  const choosableColumns = useMemo(() => sortItems.filter(item => !item.chosen), [sortItems.length]);
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -88,6 +90,9 @@ export function SortDropdownMenu() {
         <DropdownMenuSeparator className="mx-0 my-0" />
         <div className="flex justify-between items-center py-3 px-3">
           <DropdownMenu>
+            {choosableColumns.length === 0 ? 
+            <span className="text-xs text-muted-foreground">Đã chọn hết tiêu chí sắp xếp</span>
+            :
             <DropdownMenuTrigger
               asChild
             >
@@ -96,14 +101,18 @@ export function SortDropdownMenu() {
                 <ChevronDown className="text-muted-foreground size-[14px]" />
               </Button>
             </DropdownMenuTrigger>
+            }
             <DropdownMenuContent
               align="start"
               className="flex flex-col p-1 text-xs w-32"
             >
-              <DropdownMenuItem className="p-1.5 pl-2 hover:bg-accent rounded-sm">Mã</DropdownMenuItem>
-              <DropdownMenuItem className="p-1.5 pl-2 hover:bg-accent rounded-sm">Ngày</DropdownMenuItem>
-              <DropdownMenuItem className="p-1.5 pl-2 hover:bg-accent rounded-sm">Giờ</DropdownMenuItem>
-              <DropdownMenuItem className="p-1.5 pl-2 hover:bg-accent rounded-sm">Loại</DropdownMenuItem>
+              {choosableColumns.map(item => 
+                <DropdownMenuItem className="p-1.5 pl-2 hover:bg-accent rounded-sm">
+                  {item.column === "id" && "Mã"}
+                  {item.column === "date" && "Ngày"}
+                  {item.column === "time" && "Giờ"}
+                  {item.column === "type" && "Loại"}
+                </DropdownMenuItem>)}
             </DropdownMenuContent>
           </DropdownMenu>
           <Button
