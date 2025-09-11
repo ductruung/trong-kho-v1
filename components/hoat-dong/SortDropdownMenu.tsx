@@ -51,7 +51,7 @@ export function SortDropdownMenu() {
   };
 
   const onOrderChange = useCallback((column: string, order: string) => { 
-    setSortItems(prev => prev.map(it => it.column === column ? { ...it, column } : it))
+    setSortItems(prev => prev.map(it => it.column === column ? { ...it, order } : it))
   }, []);
   const onRemove = useCallback((column: string) => {
     setSortItems(prev => prev.map(it => it.column === column ? {...it, chosen: false} : it))
@@ -96,6 +96,8 @@ export function SortDropdownMenu() {
                         key={item.id} 
                         itemIndex={sortItems.findIndex(c => item.id === c.id)} 
                         item={item} 
+                        onOrderChange={onOrderChange}
+                        onRemove={onRemove}
                       />)}
                   </SortableContext>
                 </DndContext>
@@ -138,7 +140,7 @@ export function SortDropdownMenu() {
             className="text-xs h-fit py-1 rounded-sm cursor-pointer"
             variant="outline"
             size="sm"
-            disabled={sortItems.length === 0}
+            disabled={choosableColumns.length === 4}
           >
             Áp dụng cách sắp xếp
           </Button>

@@ -4,8 +4,19 @@ import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group"
 import {CSS} from '@dnd-kit/utilities'
 import { cn } from "@/lib/utils"
 import {useSortable} from '@dnd-kit/sortable'
+import { SortItem } from "./types"
 
-export default function SortItemRow({ item, itemIndex }) {
+export default function SortItemRow({ 
+  item, 
+  itemIndex,
+  onOrderChange,
+  onRemove 
+}: {
+  item: SortItem
+  itemIndex: number
+  onOrderChange: (column: string, order: string) => void
+  onRemove: (column: string) => void
+}) {
   const {attributes, listeners, setNodeRef, transform, transition} = useSortable({
     id: item.id,
     transition: {
@@ -38,23 +49,30 @@ export default function SortItemRow({ item, itemIndex }) {
         </span>
       </div>
       
+ 
       <ToggleGroup
         size="sm"
         variant="outline"
         type="single"
+        value={item.order}
+        onValueChange={(value) => onOrderChange(item.column, value)}
       >
-        <ToggleGroupItem className="text-muted-foreground data-[state=on]:text-trongkho-foreground cursor-pointer data-[state=on]:border-border p-1 h-fit" value="one" aria-label="Tăng dần">
+        <ToggleGroupItem className="text-muted-foreground data-[state=on]:text-trongkho-foreground cursor-pointer data-[state=on]:border-border p-1 h-fit" value="asc" aria-label="Tăng dần">
           <ArrowDownNarrowWide className="size-[14px]" />
         </ToggleGroupItem>
-        <ToggleGroupItem className="text-muted-foreground data-[state=on]:text-trongkho-foreground cursor-pointer p-1 h-fit" value="two" aria-label="Giảm dần">
+        <ToggleGroupItem className="text-muted-foreground data-[state=on]:text-trongkho-foreground cursor-pointer p-1 h-fit" value="des" aria-label="Giảm dần">
           <ArrowDownWideNarrow className="size-[14px]" />
         </ToggleGroupItem>
       </ToggleGroup>
-      <span className="text-xs text-muted-foreground">tăng dần</span>
+      <span className="text-xs text-muted-foreground w-15">
+        {item.order === "asc" ? "tăng dần" : "giảm dần"}
+      </span>
+  
       <Button
         size="icon"
         variant="ghost"
         className="text-muted-foreground cursor-pointer h-fit p-2 w-fit"
+        onClick={() => onRemove(item.column)}
       >
         <X className="size-[14px]" />
       </Button>

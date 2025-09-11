@@ -5,6 +5,13 @@ export interface FilterItem {
   value: any
 }
 
+export interface SortItem {
+  id: string
+  column: string
+  order: string
+  chosen: boolean
+}
+
 export const comparatorDisplayValues = {
   "equal": "=",
   "before": "<",
