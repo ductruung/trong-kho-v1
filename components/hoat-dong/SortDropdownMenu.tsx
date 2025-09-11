@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useCallback, useMemo, useState } from "react"
 import { ArrowUpDown, ChevronDown, Plus, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
@@ -23,12 +23,12 @@ import { SortItem } from "./types"
 
 export function SortDropdownMenu() {
   const [sortItems, setSortItems] = useState<SortItem[]>([
-    { id: "a", column: "id", type: "asc", chosen: true },
-    { id: "b", column: "date", type: "asc", chosen: true },
-    { id: "c", column: "time", type: "asc", chosen: true },
-    { id: "d", column: "type", type: "asc", chosen: true },
+    { id: "a", column: "id", order: "asc", chosen: false },
+    { id: "b", column: "date", order: "asc", chosen: false },
+    { id: "c", column: "time", order: "asc", chosen: false },
+    { id: "d", column: "type", order: "asc", chosen: false },
   ]);
-  const choosableColumns = useMemo(() => sortItems.filter(item => !item.chosen), [sortItems.length]);
+  const choosableColumns = sortItems.filter(item => !item.chosen);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -48,7 +48,17 @@ export function SortDropdownMenu() {
         return arrayMove(items, oldIndex, newIndex);
       });
     }
-  }
+  };
+
+  const onOrderChange = useCallback((column: string, order: string) => { 
+    setSortItems(prev => prev.map(it => it.column === column ? { ...it, column } : it))
+  }, []);
+  const onRemove = useCallback((column: string) => {
+    setSortItems(prev => prev.map(it => it.column === column ? {...it, chosen: false} : it))
+  }, [])
+  const onChosen = useCallback((column: string) => {
+    setSortItems(prev => prev.map(it => it.column === column ? {...it, chosen: true} : it))
+  }, [])
 
   return (
     <DropdownMenu>
@@ -64,8 +74,8 @@ export function SortDropdownMenu() {
       >
         <div>
           {
-            sortItems.length === 0 ?
-              <div className="p-2">
+            choosableColumns.length === 4 ?
+              <div className="p-3">
                 <p className="text-sm font-semibold text-muted-foreground mb-1.5">Chưa có cách sắp xếp nào được áp dụng</p>
                 <p className="text-xs text-muted-foreground">Thêm một tiêu chí sắp xếp phía dưới để sắp xếp dữ liệu hoạt động</p>
               </div>
@@ -81,7 +91,12 @@ export function SortDropdownMenu() {
                     items={sortItems}
                     strategy={verticalListSortingStrategy}
                   >
-                    {sortItems.map((item, _) => <SortItemRow key={item.id} itemIndex={sortItems.findIndex(c => item.id === c.id)} item={item} />)}
+                    {sortItems.map((item, _) => item.chosen &&
+                      <SortItemRow 
+                        key={item.id} 
+                        itemIndex={sortItems.findIndex(c => item.id === c.id)} 
+                        item={item} 
+                      />)}
                   </SortableContext>
                 </DndContext>
               </div>
@@ -107,7 +122,11 @@ export function SortDropdownMenu() {
               className="flex flex-col p-1 text-xs w-32"
             >
               {choosableColumns.map(item => 
-                <DropdownMenuItem className="p-1.5 pl-2 hover:bg-accent rounded-sm">
+                <DropdownMenuItem 
+                  key={item.column}
+                  className="p-1.5 pl-2 hover:bg-accent rounded-sm"
+                  onClick={() => onChosen(item.column)}
+                >
                   {item.column === "id" && "Mã"}
                   {item.column === "date" && "Ngày"}
                   {item.column === "time" && "Giờ"}
