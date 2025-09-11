@@ -32,6 +32,7 @@ export const FilterItemRow = memo(function FilterItemRow({
           <SelectItem className="text-xs" value="id">Mã</SelectItem>
           <SelectItem className="text-xs" value="date">Ngày</SelectItem>
           <SelectItem className="text-xs" value="time">Giờ</SelectItem>
+          <SelectItem className="text-xs" value="product">Sản phẩm</SelectItem>
           <SelectItem className="text-xs" value="type">Loại</SelectItem>
         </SelectContent>
       </Select>
@@ -86,6 +87,14 @@ export const FilterItemRow = memo(function FilterItemRow({
           }}
           pattern="^\d{2}:\d{2}$"
           className="text-xs md:text-xs dark:bg-popover focus-visible:ring-0 transition duration-200 h-8"
+        />
+      }
+      {item.key === "product" &&
+        <Input
+          value={item.value}
+          onChange={(e) => onValueChange(item.id, e.target.value)}
+          className="col-start-3 focus-visible:ring-0 text-xs md:text-xs transition duration-200 dark:bg-popover h-8 dark:hover:border-muted-foreground/50"
+          placeholder="Tên sản phẩm"
         />
       }
       {item.key === "type" &&

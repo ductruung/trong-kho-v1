@@ -3,6 +3,9 @@ import { useState } from "react"
 import { Heading } from "@/components/hoat-dong/Heading"
 import { ViewBar } from "@/components/hoat-dong/ViewBar"
 import { ToolBar } from "@/components/hoat-dong/ToolBar"
+import { DataTable } from "@/components/hoat-dong/data-table"
+import { columns } from "@/components/hoat-dong/columns"
+import { mockActivities } from "@/components/hoat-dong/mock"
 
 export default function HoatDongPage() {
   const [viewMode, setViewMode] = useState("one");
@@ -13,6 +16,7 @@ export default function HoatDongPage() {
       <div className="w-full">
         <ViewBar viewMode={viewMode} setViewMode={setViewMode} />
         <ToolBar />
+        <DataTable columns={columns} data={mockActivities} />
       </div>
     </main>
   );
