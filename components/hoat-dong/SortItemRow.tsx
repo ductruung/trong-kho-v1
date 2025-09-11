@@ -72,7 +72,7 @@ export default function SortItemRow({
         size="icon"
         variant="ghost"
         className="text-muted-foreground cursor-pointer h-fit p-2 w-fit"
-        onClick={() => onRemove(item.column)}
+        onClick={() => {onRemove(item.column); onOrderChange(item.column, "asc")}}
       >
         <X className="size-[14px]" />
       </Button>
