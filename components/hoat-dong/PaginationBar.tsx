@@ -7,7 +7,7 @@ import { Input } from "../ui/input"
 
 export function PaginationBar() {
   return (
-  <div className="flex items-center fixed bottom-0 w-full h-10 px-2 gap-x-2 py-3 text-xs bg-card border-t">
+  <div className="flex items-center bottom-0 w-full h-10 px-2 gap-x-2 py-3 text-xs bg-card border-y z-10">
     <Button
       size="icon"
       variant="outline"

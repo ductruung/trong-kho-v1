@@ -86,3 +86,46 @@ export const columns: ColumnDef<Activity>[] = [
       </div>
   }
 ]
+
+export const columns_seperated: ColumnDef<Activity>[] = [
+  {
+    accessorKey: "id",
+    header: () =>
+      <div className="w-full flex items-center justify-between">
+        <span>Mã</span>
+        <SortDropdown />
+      </div>,
+  },
+  {
+    accessorKey: "created_date",
+    header: () =>
+      <div className="w-full flex items-center justify-between">
+        <span>Ngày</span>
+        <SortDropdown />
+      </div>,
+  },
+  {
+    accessorKey: "created_time",
+    header: () =>
+      <div className="w-full flex items-center justify-between">
+        <span>Giờ</span>
+        <SortDropdown />
+      </div>,
+  },
+  {
+    accessorKey: "product",
+    header: () =>
+      <div className="w-full flex items-center justify-between">
+        <span>Sản phẩm</span>
+        <SortDropdown />
+      </div>
+  },
+  {
+    accessorKey: "by",
+    header: () =>
+      <div className="w-full flex items-center justify-between">
+        <span></span>
+        <SortDropdown />
+      </div>
+  }
+]
