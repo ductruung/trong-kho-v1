@@ -39,7 +39,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${raleway.variable} ${geistMono.variable} antialiased`}
+        className={`${raleway.variable} ${geistMono.variable} antialiased overflow-hidden`}
       >
         <ThemeProvider
           attribute="class"

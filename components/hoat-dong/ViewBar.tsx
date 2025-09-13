@@ -1,14 +1,10 @@
+"use client"
 import { Columns2, Square } from "lucide-react"
-import { Dispatch, SetStateAction } from "react"
+import { Dispatch, SetStateAction, useState } from "react"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 
-export function ViewBar({
-  viewMode,
-  setViewMode
-}: {
-  viewMode: string
-  setViewMode: Dispatch<SetStateAction<string>>
-}) {
+export function ViewBar() {
+  const [viewMode, setViewMode] = useState("one");
   return (
     <div className="flex w-full items-center gap-3 border-b h-14 px-3 py-3">
       <ToggleGroup

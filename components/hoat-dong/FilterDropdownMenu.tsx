@@ -1,3 +1,4 @@
+"use client"
 import { useCallback, useState } from "react"
 import { Plus, Filter } from "lucide-react"
 import { v4 as uuidv4 } from 'uuid'

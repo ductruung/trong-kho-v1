@@ -1,3 +1,4 @@
+"use client"
 import { useCallback, useMemo, useState } from "react"
 import { ArrowUpDown, ChevronDown, Plus, X } from "lucide-react"
 import { Button } from "@/components/ui/button"

@@ -41,7 +41,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <>
-    <Table containerClassName="max-h-[480px] overflow-y-auto" style={{ minWidth: table.getTotalSize?.() }}>
+    <Table className="overflow-y-scroll" containerClassName="flex-grow overflow-y-auto" style={{ minWidth: table.getTotalSize?.() }}>
       <TableHeader>
         {table.getHeaderGroups().map((headerGroup) => (
           <TableRow className="border-b" data-slot="table-row" key={headerGroup.id} >
@@ -102,41 +102,6 @@ export function DataTable<TData, TValue>({
 
       </TableFooter>
     </Table>
-    <div className="flex items-center justify-between gap-3 px-2 py-2 text-xs">
-      <div className="flex items-center gap-2">
-        <button
-          type="button"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-          className="h-7 w-7 rounded-sm border bg-background disabled:opacity-50"
-          aria-label="Previous page"
-        >
-          ←
-        </button>
-        <div className="px-2">Page <span className="font-medium">{table.getState().pagination.pageIndex + 1}</span> of <span className="font-medium">{table.getPageCount()}</span></div>
-        <button
-          type="button"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-          className="h-7 w-7 rounded-sm border bg-background disabled:opacity-50"
-          aria-label="Next page"
-        >
-          →
-        </button>
-      </div>
-      <div className="flex items-center gap-2">
-        <select
-          className="h-7 rounded-sm border bg-background px-2"
-          value={table.getState().pagination.pageSize}
-          onChange={(e) => table.setPageSize(Number(e.target.value))}
-        >
-          {[10, 25, 50, 100].map((size) => (
-            <option key={size} value={size}>{size} rows</option>
-          ))}
-        </select>
-        <div className="text-muted-foreground">{data.length} records</div>
-      </div>
-    </div>
     </>
   )
 }
