@@ -6,7 +6,7 @@ import { SortDropdownMenu } from "./SortDropdownMenu"
 
 export function ToolBar() {
   return (
-    <div className="w-auto flex items-center gap-3 border-t border-r h-10 bg-card px-3 py-3">
+    <div className="w-auto flex items-center gap-3 border-r h-10 bg-card px-3 py-3">
       <Button className="text-xs h-fit py-1 rounded-sm cursor-pointer" variant="ghost" size="sm">
         <RotateCcw className="text-muted-foreground size-[14px]" />
         Tải lại bảng

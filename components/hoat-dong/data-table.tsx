@@ -32,10 +32,12 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   className,
-  tableTitle
+  tableTitle,
+  viewMode
 }: DataTableProps<TData, TValue> & { 
   className?: string 
   tableTitle?: React.JSX.Element
+  viewMode: string
 }) {
   const [pagination, setPagination] = React.useState({ pageIndex: 0, pageSize: 25 })
   const table = useReactTable({
@@ -49,14 +51,16 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className={cn("flex flex-col max-h-full group hover:inset-shadow-2xs hover:inset-shadow-trongkho-foreground/50 duration-800 transition overflow-scroll", className)}>
-      <div className="bg-background group-hover:inset-shadow-2xs group-hover:inset-shadow-trongkho-foreground/50">
-        <div className="h-auto flex p-3 px-5 gap-3 text-muted-foreground group-hover:text-trongkho-foreground group-active:text-trongkho-foreground transition cursor-default">
+    <div className="flex flex-col h-full group transition overflow-scroll">
+      <div className="flex-none bg-backgroundgroup-hover:inset-shadow-2xs group-hover:inset-shadow-trongkho-foreground/50">
+      {viewMode === "two" &&
+        <div className="h-auto flex p-3 px-5 gap-3 border-b border-r text-muted-foreground group-hover:text-trongkho-foreground group-active:text-trongkho-foreground transition cursor-default">
           {tableTitle && tableTitle}
         </div>
+        }
         <ToolBar />
       </div>  
-      <div className="">
+      <div>
       {table.getHeaderGroups().map((headerGroup) => (
         <div className="border-y flex h-10" key={headerGroup.id} > {/*Header*/}
           {headerGroup.headers.map((header) => {
@@ -87,7 +91,7 @@ export function DataTable<TData, TValue>({
       ))}
       </div>
 
-      <div className="overflow-y-auto">
+      <div className="h-[calc(100%-3rem)] overflow-y-auto">
         {table.getRowModel().rows?.length ? (
           table.getRowModel().rows.map((row) => (
             <div

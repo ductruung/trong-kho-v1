@@ -81,7 +81,7 @@ export const columns: ColumnDef<Activity>[] = [
     accessorKey: "by",
     header: () =>
       <div className="w-full flex items-center justify-between">
-        <span></span>
+        <span>Phương thức</span>
         <SortDropdown />
       </div>
   }
@@ -124,7 +124,7 @@ export const columns_seperated: ColumnDef<Activity>[] = [
     accessorKey: "by",
     header: () =>
       <div className="w-full flex items-center justify-between">
-        <span></span>
+        <span>Phương thức</span>
         <SortDropdown />
       </div>
   }

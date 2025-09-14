@@ -4,14 +4,10 @@ import { useState, useMemo, useCallback } from "react"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { useSearchParams, usePathname, useRouter } from 'next/navigation'
 
-export function ViewBar() {
+export function ViewBar({ viewMode }: { viewMode: string }) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
-
-  const viewMode = useMemo(() => {
-    return searchParams.get("view") || "one";
-  }, [searchParams]);
 
   const handleToggle = useCallback((value: string) => {
     const params = new URLSearchParams(searchParams);
