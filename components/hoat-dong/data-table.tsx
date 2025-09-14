@@ -49,7 +49,7 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className={cn("flex flex-col max-h-full group hover:inset-shadow-2xs hover:inset-shadow-trongkho-foreground/50 duration-300 overflow-scroll", className)}>
+    <div className={cn("flex flex-col max-h-full group hover:inset-shadow-2xs hover:inset-shadow-trongkho-foreground/50 duration-800 transition overflow-scroll", className)}>
       <div className="bg-background group-hover:inset-shadow-2xs group-hover:inset-shadow-trongkho-foreground/50">
         <div className="h-auto flex p-3 px-5 gap-3 text-muted-foreground group-hover:text-trongkho-foreground group-active:text-trongkho-foreground transition cursor-default">
           {tableTitle && tableTitle}
