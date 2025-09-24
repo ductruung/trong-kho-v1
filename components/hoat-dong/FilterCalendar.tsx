@@ -16,6 +16,7 @@ export function FilterCalendar({ item, onValueChange, className }: {
   const [open, setOpen] = useState(false)
   const [date, setDate] = useState<Date | undefined>(new Date())
   const [month, setMonth] = useState<Date | undefined>(date)
+  console.log("date: ", date);
 
   return (
     <div className={cn("flex flex-col gap-3", className)}>

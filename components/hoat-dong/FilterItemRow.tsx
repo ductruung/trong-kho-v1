@@ -20,7 +20,7 @@ export const FilterItemRow = memo(function FilterItemRow({
   onRemove: (id: string) => void
 }) {
   return (
-    <div className="grid gap-2 grid-cols-[minmax(0,80px)_minmax(0,70px)_minmax(0,160px)_minmax(0,26px)]">
+    <div className="grid gap-2 grid-cols-[minmax(0,140px)_minmax(0,70px)_minmax(0,160px)_minmax(0,26px)]">
       <Select
         value={item.key}
         onValueChange={selectedKey => onKeyChange(item.id, selectedKey)}
@@ -34,6 +34,7 @@ export const FilterItemRow = memo(function FilterItemRow({
           <SelectItem className="text-xs" value="time">Giờ</SelectItem>
           <SelectItem className="text-xs" value="product">Sản phẩm</SelectItem>
           <SelectItem className="text-xs" value="type">Loại</SelectItem>
+          <SelectItem className="text-xs" value="by">Phương thức</SelectItem>
         </SelectContent>
       </Select>
 
@@ -103,7 +104,7 @@ export const FilterItemRow = memo(function FilterItemRow({
           onValueChange={selectedValue => onValueChange(item.id, selectedValue)}
         >
           <SelectTrigger size="sm" className="col-start-3 dark:bg-popover dark:hover:bg-popover dark:hover:border-muted-foreground/50 w-full text-xs">
-            <SelectValue placeholder={"Xuất/Nhập kho"}/>
+            <SelectValue />
           </SelectTrigger>
           <SelectContent>
             <SelectItem className="text-xs" value="checkin">Nhập kho</SelectItem>
@@ -111,6 +112,20 @@ export const FilterItemRow = memo(function FilterItemRow({
           </SelectContent>
         </Select>
       }
+      {item.key === "by" &&
+        <Select
+          value={item.value ? item.value : undefined}
+          onValueChange={selectedValue => onValueChange(item.id, selectedValue)}
+        >
+          <SelectTrigger size="sm" className="col-start-3 dark:bg-popover dark:hover:bg-popover dark:hover:border-muted-foreground/50 w-full text-xs">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem className="text-xs" value="manual">Nhập tay</SelectItem>
+            <SelectItem className="text-xs" value="qr">QR</SelectItem>
+          </SelectContent>
+        </Select>
+      }      
       <Button
         size="icon"
         variant="ghost"

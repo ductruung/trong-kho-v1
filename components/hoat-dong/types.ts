@@ -1,3 +1,5 @@
+export type Primitive = string | number | boolean | null | undefined | Date
+
 export interface FilterItem {
   id: string
   key: string

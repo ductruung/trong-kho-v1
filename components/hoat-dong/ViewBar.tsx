@@ -10,7 +10,7 @@ export function ViewBar({ viewMode }: { viewMode: string }) {
   const { replace } = useRouter();
 
   const handleToggle = useCallback((value: string) => {
-    const params = new URLSearchParams(searchParams);
+    const params = new URLSearchParams();
     params.set('view', value);
     replace(`${pathname}?${params.toString()}`);
   }, [searchParams, pathname, replace]);

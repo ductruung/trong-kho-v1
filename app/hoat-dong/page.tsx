@@ -7,7 +7,7 @@ import { mockActivities } from "@/components/hoat-dong/mock"
 import { PaginationBar } from "@/components/hoat-dong/PaginationBar"
 import { PackageMinus, PackagePlus } from "lucide-react"
 
-interface ActivitiesSearchParams {
+export interface ActivitiesSearchParams {
   view?: string;
   filter?: string
   sort?: string
@@ -23,21 +23,6 @@ interface ActivitiesSearchParams {
   checkout_rows?: string
 }
 
-/**
- * Fetches the total number of activity pages based on search parameters
- * @param activitiesSearchParams - The search parameters for filtering activities
- * @returns Promise resolving to either a single page count or separate counts for checkin/checkout
- */
-async function fetchActivitiesPages(
-  activitiesSearchParams: ActivitiesSearchParams
-): Promise<number | { checkin: number, checkout: number }> {
-  // Implementation
-}
-
-async function fetchActivities(activitiesSearchParams: ActivitiesSearchParams) {
-
-}
-
 export default async function HoatDongPage(props: {
   searchParams?: Promise<ActivitiesSearchParams>;
 }) {
@@ -50,14 +35,16 @@ export default async function HoatDongPage(props: {
       <Heading />
       <div className="h-full w-full">
         <ViewBar viewMode={viewMode} />
-        {viewMode === "one" &&
-          <div className="h-[calc(100vh-6.5rem)]">
-            <DataTable
-              columns={columns}
-              data={mockActivities}
-              viewMode={viewMode}
-            />
-          </div>
+        {
+          viewMode === "one" &&
+            <div className="h-[calc(100vh-6.5rem)]">
+              <DataTable
+                columns={columns}
+                data={mockActivities}
+                viewMode={viewMode}
+                context={"unified"}
+              />
+            </div>
         }
         {viewMode === "two" &&
           <div className="grid grid-cols-2 h-[calc(100vh-6.5rem)] w-full">
@@ -65,6 +52,7 @@ export default async function HoatDongPage(props: {
               columns={columns_seperated}
               data={mockActivities}
               viewMode={viewMode}
+              context={"checkout"}
               tableTitle={
                 <>
                   <PackageMinus strokeWidth={1.5} className="size-[20px]" />
@@ -76,6 +64,7 @@ export default async function HoatDongPage(props: {
               columns={columns_seperated}
               data={mockActivities}
               viewMode={viewMode}
+              context={"checkin"}
               tableTitle={
                 <>
                   <PackagePlus strokeWidth={1.5} className="size-[20px]" />
