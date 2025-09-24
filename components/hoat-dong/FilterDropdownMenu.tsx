@@ -45,14 +45,12 @@ function deserializeFilterParam(param: string[]): FilterItem[] {
 
 export function FilterDropdownMenu() {
   const tableContext = useContext<"unified" | "checkin" | "checkout">(TableContext);
-
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const filterKey = 
     tableContext === "unified" ? "filter" :
     tableContext === "checkin" ? "checkin_filter" : "checkout_filter";
   const filterParams = params.getAll(filterKey);
-
   const [filterItems, setFilterItems] = useState<FilterItem[]>(filterParams ? () => deserializeFilterParam(filterParams) : []);
   const pathname = usePathname();
   const { replace } = useRouter();
@@ -76,15 +74,19 @@ export function FilterDropdownMenu() {
         return it
       }))
   }, [])
+
   const onValueChange = useCallback((id: string, value: any) => {
     setFilterItems(prev => prev.map(it => it.id === id ? { ...it, value } : it))
   }, [])
+
   const onComparatorChange = useCallback((id: string, comparator: string) => {
     setFilterItems(prev => prev.map(it => it.id === id ? {...it, comparator } : it))
   }, [])
+
   const onRemove = useCallback((id: string) => {
     setFilterItems(prev => prev.filter(it => it.id !== id))
   }, [])
+
   const onApplyFilters = () => {
     const params = new URLSearchParams(searchParams);
     const filterKey = 
@@ -114,7 +116,7 @@ export function FilterDropdownMenu() {
             )} 
           />
           Bộ lọc
-          {filterParams.length > 0 && <span className="text-trongkho-foreground">{"[" + filterParams.length + "]"}</span>}
+          {filterParams.length > 0 && <span className="text-trongkho-foreground">{"(" + filterParams.length + ")"}</span>}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
