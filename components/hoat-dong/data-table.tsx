@@ -29,7 +29,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[]
 }
 
-export const TableContext = createContext("");
+export const TableContext = createContext<"unified" | "checkin" | "checkout">("unified");
 
 export function DataTable<TData, TValue>({
   columns,
@@ -56,7 +56,7 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <TableContext value={context}>
+    <TableContext value={context as "unified" | "checkin" | "checkout"}>
       <div className="flex flex-col h-full group transition-all overflow-scroll">
         <div className="flex-none bg-background inset-shadow-sm group-hover:inset-shadow-trongkho-foreground/50 duration-500">
         {viewMode === "two" &&

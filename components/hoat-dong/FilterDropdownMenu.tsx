@@ -1,5 +1,5 @@
 "use client"
-import { useCallback, useContext, useState } from "react"
+import { useCallback, useContext, useEffect, useState } from "react"
 import { Plus, Filter } from "lucide-react"
 import { v4 as uuidv4 } from 'uuid'
 import { Button } from "@/components/ui/button"
@@ -8,11 +8,10 @@ import { FilterItemRow } from "./FilterItemRow"
 import { FilterItem, Primitive } from "./types"
 import { TableContext } from "./data-table"
 import { useSearchParams, usePathname, useRouter } from 'next/navigation'
+import { cn } from "@/lib/utils"
 
 function serializeValue(v: Primitive | Primitive[]): string {
   if (v instanceof Date) {
-    console.log("date filter value: ", v);
-    console.log("date filter value toISOString: ", v.toISOString());
     return v.toISOString()
   }
   if (Array.isArray(v)) return v.map(serializeValue).join('|') // e.g. multi-select -> "a|b|c"
@@ -27,15 +26,55 @@ function toFilterParam(item: FilterItem): string {
   return `${field}:${op}:${val}`
 }
 
+function deserializeFilterParam(param: string[]): FilterItem[] {
+  return param.map(item => {
+    let [field, op, val] = item.split(":") as any;
+    if (field === "date") {
+      val = new Date(decodeURIComponent(decodeURIComponent(val)));
+    } else if (field === "time") {
+      val = decodeURIComponent(decodeURIComponent(val));
+    }
+    return {
+      id: uuidv4(),
+      key: field,
+      comparator: op,
+      value: val
+    }
+  })
+}
+
 export function FilterDropdownMenu() {
-  const [filterItems, setFilterItems] = useState<FilterItem[]>([]);
-  const tableContext = useContext(TableContext);
+  const tableContext = useContext<"unified" | "checkin" | "checkout">(TableContext);
+
   const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
+  const filterKey = 
+    tableContext === "unified" ? "filter" :
+    tableContext === "checkin" ? "checkin_filter" : "checkout_filter";
+  const filterParams = params.getAll(filterKey);
+
+  const [filterItems, setFilterItems] = useState<FilterItem[]>(filterParams ? () => deserializeFilterParam(filterParams) : []);
   const pathname = usePathname();
   const { replace } = useRouter();
 
+  useEffect(() => {
+    if (filterItems.length === 0) {
+      const params = new URLSearchParams(searchParams);
+      params.delete(filterKey);
+      replace(`${pathname}?${params.toString()}`);
+    }
+  }, [filterItems, tableContext, searchParams, pathname, replace])
+
   const onKeyChange = useCallback((id: string, key: string) => {
-    setFilterItems(prev => prev.map(it => it.id === id ? { ...it, key } : it))
+    setFilterItems(prev => prev.map(it => {
+      if (it.id === id) {
+        if (key === "date") {
+          return { ...it, key, value: new Date() }
+        }
+        return { ...it, key }
+      } else 
+        return it
+      }))
   }, [])
   const onValueChange = useCallback((id: string, value: any) => {
     setFilterItems(prev => prev.map(it => it.id === id ? { ...it, value } : it))
@@ -62,9 +101,20 @@ export function FilterDropdownMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button className="text-xs h-fit py-1 rounded-sm cursor-pointer" variant="ghost" size="sm">
-          <Filter className="text-muted-foreground size-[14px]" />
+        <Button 
+          className={cn("text-xs h-fit py-1 rounded-sm cursor-pointer", 
+            filterParams.length > 0 && "text-trongkho-foreground dark:hover:text-trongkho-foreground dark:hover:bg-trongkho-foreground/10"
+          )} 
+          variant="ghost" 
+          size="sm"
+        >
+          <Filter 
+            className={cn("text-muted-foreground size-[14px]",
+              filterParams.length > 0 && "text-trongkho-foreground"
+            )} 
+          />
           Bộ lọc
+          {filterParams.length > 0 && <span className="text-trongkho-foreground">{"[" + filterParams.length + "]"}</span>}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
