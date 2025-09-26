@@ -5,8 +5,5 @@ export default async function TestPage() {
 
   const { data } = await supabase.from("orders").select();
 
-  console.log("supabase: ", supabase);
-  console.log("data: ", data);
-
   return <h1>Test</h1>
 }

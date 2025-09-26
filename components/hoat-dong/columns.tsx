@@ -5,8 +5,44 @@ import { Activity } from "./types"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu"
 import { Button } from "../ui/button"
 import { ArrowDown, ArrowUp, ChevronDown } from "lucide-react"
+import { TableContext } from "./data-table"
+import { useContext } from "react"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import { defaultSortItems, deserializeSortParam, toSortParam } from "./SortDropdownMenu"
 
-function SortDropdown() {
+function SortDropdown({ 
+  context,
+  column, 
+} 
+: { 
+  context?: string 
+  column: string
+}) {
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
+  const sortKey = 
+    context === "checkin" ? "checkin_sort" :
+    context === "checkout" ? "checkout_sort" :
+      "sort";
+  const sortParams = params.getAll(sortKey);
+  const sortItems = sortParams.length !== 0 ? deserializeSortParam(sortParams) : defaultSortItems;
+  const pathname = usePathname();
+  const { replace } = useRouter();
+
+  const onSelect = (order: string) => {
+    sortItems.forEach(item => {
+      if (item.column === column) {
+        item.order = order;
+        item.chosen = true;
+      }
+    })
+    params.delete(sortKey);
+    sortItems.forEach(item => {
+      params.append(sortKey, toSortParam(item))
+    })
+    replace(`${pathname}?${params.toString()}`);
+  } 
+  
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -23,11 +59,17 @@ function SortDropdown() {
         alignOffset={-8}
         className="rounded-sm"
       >
-        <DropdownMenuItem className="text-xs text-muted-foreground">
+        <DropdownMenuItem 
+          className="text-xs text-muted-foreground"
+          onClick={() => onSelect("asc")}
+        >
           <ArrowUp />
           Sắp xếp tăng dần
         </DropdownMenuItem>
-        <DropdownMenuItem className="text-xs text-muted-foreground">
+        <DropdownMenuItem 
+          className="text-xs text-muted-foreground"
+          onClick={() => onSelect("des")}
+        >
           <ArrowDown />
           Sắp xếp giảm dần
         </DropdownMenuItem>
@@ -42,7 +84,7 @@ export const columns: ColumnDef<Activity>[] = [
     header: () =>
       <div className="w-full flex items-center justify-between">
         <span>Mã</span>
-        <SortDropdown />
+        <SortDropdown column="id" />
       </div>,
   },
   {
@@ -50,7 +92,7 @@ export const columns: ColumnDef<Activity>[] = [
     header: () =>
       <div className="w-full flex items-center justify-between">
         <span>Ngày</span>
-        <SortDropdown />
+        <SortDropdown column="date" />
       </div>,
   },
   {
@@ -58,7 +100,7 @@ export const columns: ColumnDef<Activity>[] = [
     header: () =>
       <div className="w-full flex items-center justify-between">
         <span>Giờ</span>
-        <SortDropdown />
+        <SortDropdown column="time" />
       </div>,
   },
   {
@@ -66,7 +108,7 @@ export const columns: ColumnDef<Activity>[] = [
     header: () =>
       <div className="w-full flex items-center justify-between">
         <span>Sản phẩm</span>
-        <SortDropdown />
+        <SortDropdown column="product" />
       </div>
   },
   {
@@ -74,7 +116,7 @@ export const columns: ColumnDef<Activity>[] = [
     header: () =>
       <div className="w-full flex items-center justify-between">
         <span>Loại</span>
-        <SortDropdown />
+        <SortDropdown column="type" />
       </div>
   },
   {
@@ -82,18 +124,18 @@ export const columns: ColumnDef<Activity>[] = [
     header: () =>
       <div className="w-full flex items-center justify-between">
         <span>Phương thức</span>
-        <SortDropdown />
+        <SortDropdown column="by" />
       </div>
   }
 ]
 
-export const columns_seperated: ColumnDef<Activity>[] = [
+export const columns_seperated = (context: string): ColumnDef<Activity>[] => ([
   {
     accessorKey: "id",
     header: () =>
       <div className="w-full flex items-center justify-between">
         <span>Mã</span>
-        <SortDropdown />
+        <SortDropdown context={context} column="id" />
       </div>,
   },
   {
@@ -101,7 +143,7 @@ export const columns_seperated: ColumnDef<Activity>[] = [
     header: () =>
       <div className="w-full flex items-center justify-between">
         <span>Ngày</span>
-        <SortDropdown />
+        <SortDropdown context={context} column="date" />
       </div>,
   },
   {
@@ -109,7 +151,7 @@ export const columns_seperated: ColumnDef<Activity>[] = [
     header: () =>
       <div className="w-full flex items-center justify-between">
         <span>Giờ</span>
-        <SortDropdown />
+        <SortDropdown context={context} column="time" />
       </div>,
   },
   {
@@ -117,7 +159,7 @@ export const columns_seperated: ColumnDef<Activity>[] = [
     header: () =>
       <div className="w-full flex items-center justify-between">
         <span>Sản phẩm</span>
-        <SortDropdown />
+        <SortDropdown context={context} column="product" />
       </div>
   },
   {
@@ -125,7 +167,7 @@ export const columns_seperated: ColumnDef<Activity>[] = [
     header: () =>
       <div className="w-full flex items-center justify-between">
         <span>Phương thức</span>
-        <SortDropdown />
+        <SortDropdown context={context} column="by" />
       </div>
   }
-]
+])

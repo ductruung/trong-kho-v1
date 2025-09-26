@@ -11,7 +11,7 @@ export interface SortItem {
   id: string
   column: string
   order: string
-  chosen: boolean
+  chosen?: boolean
 }
 
 export interface Product {

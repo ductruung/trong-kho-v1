@@ -1,8 +1,7 @@
 
 import { Heading } from "@/components/hoat-dong/Heading"
 import { ViewBar } from "@/components/hoat-dong/ViewBar"
-import { DataTable } from "@/components/hoat-dong/data-table"
-import { columns, columns_seperated } from "@/components/hoat-dong/columns"
+import { DataTableWrapper } from "@/components/hoat-dong/DataTableWrapper"
 import { mockActivities } from "@/components/hoat-dong/mock"
 import { PaginationBar } from "@/components/hoat-dong/PaginationBar"
 import { PackageMinus, PackagePlus } from "lucide-react"
@@ -38,8 +37,7 @@ export default async function HoatDongPage(props: {
         {
           viewMode === "one" &&
             <div className="h-[calc(100vh-6.5rem)]">
-              <DataTable
-                columns={columns}
+              <DataTableWrapper
                 data={mockActivities}
                 viewMode={viewMode}
                 context={"unified"}
@@ -48,8 +46,7 @@ export default async function HoatDongPage(props: {
         }
         {viewMode === "two" &&
           <div className="grid grid-cols-2 h-[calc(100vh-6.5rem)] w-full">
-            <DataTable
-              columns={columns_seperated}
+            <DataTableWrapper
               data={mockActivities}
               viewMode={viewMode}
               context={"checkout"}
@@ -60,8 +57,7 @@ export default async function HoatDongPage(props: {
                 </>
               }
             />
-            <DataTable
-              columns={columns_seperated}
+            <DataTableWrapper
               data={mockActivities}
               viewMode={viewMode}
               context={"checkin"}

@@ -28,7 +28,6 @@ export default function SortItemRow({
     transform: CSS.Transform.toString(transform),
     transition,
   };
-  console.log(itemIndex);
 
   return (
     <div 

@@ -25,32 +25,32 @@ import { v4 as uuidv4 } from 'uuid'
 import { TableContext } from "./data-table"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { cn } from "@/lib/utils"
+import { table } from "console"
 
-function toSortParam(item: SortItem): string {
-  return `${item.column}:${item.order}:${item.chosen}`;
+export function toSortParam(item: SortItem): string {
+  return `${item.id}:${item.column}:${item.order}`;
 }
 
 export let defaultSortItems = [
-  { id: "a", column: "id", order: "asc", chosen: false },
-  { id: "b", column: "date", order: "asc", chosen: false },
-  { id: "c", column: "time", order: "asc", chosen: false },
-  { id: "d", column: "product", order: "asc", chosen: false },
-  { id: "e", column: "type", order: "asc", chosen: false },
-  { id: "f", column: "by", order: "asc", chosen: false },
+  { id: "a", column: "id", order: "asc" },
+  { id: "b", column: "date", order: "asc" },
+  { id: "c", column: "time", order: "asc" },
+  { id: "d", column: "product", order: "asc" },
+  { id: "e", column: "type", order: "asc" },
+  { id: "f", column: "by", order: "asc" },
 ] as SortItem[];
 
-function deserializeSortParam(param: string[]): SortItem[] {
+export function deserializeSortParam(param: string[]): SortItem[] {
   let sortItems = [] as SortItem[];
   param.forEach(item => {
-    let [column, order, chosen] = item.split(":") as any;
-    chosen = chosen === "true";
-
-    sortItems.push({ id: uuidv4(), column, order, chosen });
+    let [id, column, order] = item.split(":") as any;
+    sortItems.push({ id , column, order });
   });
   return sortItems;
 }
 
 export function SortDropdownMenu() {
+  const [open, setOpen] = useState(false);
   const tableContext = useContext<"unified" | "checkin" | "checkout">(TableContext);
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
@@ -58,8 +58,14 @@ export function SortDropdownMenu() {
     tableContext === "unified" ? "sort" :
     tableContext === "checkin" ? "checkin_sort" : "checkout_sort";
   const sortParams = params.getAll(sortKey);
-  const [sortItems, setSortItems] = useState<SortItem[]>(sortParams.length !== 0 ? () => deserializeSortParam(sortParams) : defaultSortItems);
-  const choosableColumns = sortItems.filter(item => !item.chosen);
+  const sortItems = deserializeSortParam(sortParams);
+  const [localSortItems, setLocalSortItems] = useState<SortItem[]>(sortItems);
+  const choosableColumns = useMemo(() => defaultSortItems.filter(item => {
+    if (tableContext !== "unified") {
+      return !localSortItems.some(localItem => item.id === localItem.id) && item.column !== "type"
+    }
+    return !localSortItems.some(localItem => item.id === localItem.id)
+  }), [localSortItems.length]);
   const pathname = usePathname();
   const { replace } = useRouter();
   const sensors = useSensors(
@@ -72,7 +78,7 @@ export function SortDropdownMenu() {
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (active.id !== over!.id) {
-      setSortItems((items) => {
+      setLocalSortItems((items) => {
         const oldIndex = items.findIndex(item => item.id === active.id);
         const newIndex = items.findIndex(item => item.id === over!.id);
 
@@ -81,39 +87,58 @@ export function SortDropdownMenu() {
     }
   };
 
-  useEffect(() => {
-    if (choosableColumns.length === 6) {
-      const params = new URLSearchParams(searchParams);
-      params.delete(sortKey);
-      replace(`${pathname}?${params.toString()}`);
-    }
-  }, [sortItems, tableContext, searchParams, pathname, replace])
-
   const onOrderChange = useCallback((column: string, order: string) => { 
-    setSortItems(prev => prev.map(it => it.column === column ? { ...it, order } : it))
+    setLocalSortItems(prev => prev.map(it => it.column === column ? { ...it, order } : it))
   }, [])
 
   const onRemove = useCallback((column: string) => {
-    setSortItems(prev => prev.map(it => it.column === column ? {...it, chosen: false} : it))
+    setLocalSortItems(prev => prev.filter(it => it.column !== column))
   }, [])
 
   const onChosen = useCallback((column: string) => {
-    setSortItems(prev => prev.map(it => it.column === column ? {...it, chosen: true} : it))
+    let id: string;
+    switch (column) {
+      case "id":
+        id = "a";
+        break;
+      case "date":
+        id = "b";
+        break;
+      case "time":
+        id = "c";
+        break;
+      case "product":
+        id = "d";
+        break;
+      case "type":
+        id = "e";
+        break;
+      case "by":
+        id = "f";
+        break;
+    }
+    setLocalSortItems(prev => {
+      return [...prev, { id, column, order: "asc" }]
+    })
   }, [])
 
   const onApplySort = () => {
+    const params = new URLSearchParams(searchParams);
     params.delete(sortKey);
-    sortItems.forEach(item => {
+    localSortItems.forEach(item => {
       params.append(sortKey, toSortParam(item))
     })
     replace(`${pathname}?${params.toString()}`);
   }
 
-  //debug:
-  console.log("sortParams: ", sortParams);
-
   return (
-    <DropdownMenu>
+    <DropdownMenu
+      open={open}
+      onOpenChange={() => {
+        setOpen(prev => !prev)
+        setTimeout(() => setLocalSortItems(sortItems), 100)
+      }}
+    >
       <DropdownMenuTrigger asChild>
         <Button 
           className={cn("text-xs h-fit py-1 rounded-sm cursor-pointer", 
@@ -128,7 +153,9 @@ export function SortDropdownMenu() {
             )} 
           />
           Sắp xếp
-          {sortParams.length !== 0 && <span  className="text-trongkho-foreground">({6 - choosableColumns.length})</span>}
+          {sortParams.length !== 0 && <span  className="text-trongkho-foreground">({
+            sortParams.length
+          })</span>}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
@@ -137,7 +164,8 @@ export function SortDropdownMenu() {
       >
         <div>
           {
-            choosableColumns.length === 6 ?
+            localSortItems.length === 0
+            ?
               <div className="p-3">
                 <p className="text-sm font-semibold text-muted-foreground mb-1.5">Chưa có cách sắp xếp nào được áp dụng</p>
                 <p className="text-xs text-muted-foreground">Thêm một tiêu chí sắp xếp phía dưới để sắp xếp dữ liệu hoạt động</p>
@@ -151,10 +179,10 @@ export function SortDropdownMenu() {
                   autoScroll={false}
                 >
                   <SortableContext
-                    items={sortItems}
+                    items={localSortItems}
                     strategy={verticalListSortingStrategy}
                   >
-                    {sortItems.map((item, index) => item.chosen &&
+                    {localSortItems.map((item, index) => 
                       <SortItemRow 
                         key={item.id} 
                         itemIndex={index} 
