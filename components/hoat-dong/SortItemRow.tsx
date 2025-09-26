@@ -28,6 +28,7 @@ export default function SortItemRow({
     transform: CSS.Transform.toString(transform),
     transition,
   };
+  console.log(itemIndex);
 
   return (
     <div 
@@ -39,12 +40,14 @@ export default function SortItemRow({
       <Menu {...listeners} className="size-[16px] hover:text-foreground transition duration-200 text-muted-foreground cursor-pointer" />
       <div className="grow">
         <span className="text-xs text-muted-foreground">
-          {itemIndex !== 0 ? "rồi theo" : "sắp xếp theo"}
+          theo
           <span className="text-sm text-foreground">
             {item.column === "id" && " Mã"}
             {item.column === "date" && " Ngày"}
             {item.column === "time" && " Giờ"}
+            {item.column === "product" && " Sản phẩm"}
             {item.column === "type" && " Loại"}
+            {item.column === "by" && " Phương thức"}
           </span>
         </span>
       </div>

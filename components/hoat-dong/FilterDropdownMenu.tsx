@@ -88,11 +88,6 @@ export function FilterDropdownMenu() {
   }, [])
 
   const onApplyFilters = () => {
-    const params = new URLSearchParams(searchParams);
-    const filterKey = 
-      tableContext === "unified" ? "filter" :
-      tableContext === "checkin" ? "checkin_filter" : "checkout_filter";
-    
     params.delete(filterKey);
     filterItems.forEach(item => {
       params.append(filterKey, toFilterParam(item))

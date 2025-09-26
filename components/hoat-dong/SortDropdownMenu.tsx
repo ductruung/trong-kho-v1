@@ -1,5 +1,5 @@
 "use client"
-import { useCallback, useMemo, useState } from "react"
+import { useCallback, useContext, useEffect, useMemo, useState } from "react"
 import { ArrowUpDown, ChevronDown, Plus, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
@@ -21,28 +21,57 @@ import {
 } from '@dnd-kit/sortable'
 import SortItemRow from "./SortItemRow"
 import { SortItem } from "./types"
+import { v4 as uuidv4 } from 'uuid'
+import { TableContext } from "./data-table"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
+
+function toSortParam(item: SortItem): string {
+  return `${item.column}:${item.order}:${item.chosen}`;
+}
+
+let defaultSortItems = [
+  { id: "a", column: "id", order: "asc", chosen: false },
+  { id: "b", column: "date", order: "asc", chosen: false },
+  { id: "c", column: "time", order: "asc", chosen: false },
+  { id: "d", column: "product", order: "asc", chosen: false },
+  { id: "e", column: "type", order: "asc", chosen: false },
+  { id: "f", column: "by", order: "asc", chosen: false },
+] as SortItem[];
+
+function deserializeSortParam(param: string[]): SortItem[] {
+  let sortItems = [] as SortItem[];
+  param.forEach(item => {
+    let [column, order, chosen] = item.split(":") as any;
+    chosen = chosen === "true";
+
+    sortItems.push({ id: uuidv4(), column, order, chosen });
+  });
+  return sortItems;
+}
 
 export function SortDropdownMenu() {
-  const [sortItems, setSortItems] = useState<SortItem[]>([
-    { id: "a", column: "id", order: "asc", chosen: false },
-    { id: "b", column: "date", order: "asc", chosen: false },
-    { id: "c", column: "time", order: "asc", chosen: false },
-    { id: "d", column: "type", order: "asc", chosen: false },
-  ]);
+  const tableContext = useContext<"unified" | "checkin" | "checkout">(TableContext);
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams);
+  const sortKey = 
+    tableContext === "unified" ? "sort" :
+    tableContext === "checkin" ? "checkin_sort" : "checkout_sort";
+  const sortParams = params.getAll(sortKey);
+  const [sortItems, setSortItems] = useState<SortItem[]>(sortParams.length !== 0 ? () => deserializeSortParam(sortParams) : defaultSortItems);
   const choosableColumns = sortItems.filter(item => !item.chosen);
-
+  const pathname = usePathname();
+  const { replace } = useRouter();
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
+
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (active.id !== over!.id) {
       setSortItems((items) => {
-        console.log("active: ", active);
-        console.log("over: ", over);
         const oldIndex = items.findIndex(item => item.id === active.id);
         const newIndex = items.findIndex(item => item.id === over!.id);
 
@@ -51,15 +80,36 @@ export function SortDropdownMenu() {
     }
   };
 
+  useEffect(() => {
+    if (choosableColumns.length === 6) {
+      const params = new URLSearchParams(searchParams);
+      params.delete(sortKey);
+      replace(`${pathname}?${params.toString()}`);
+    }
+  }, [sortItems, tableContext, searchParams, pathname, replace])
+
   const onOrderChange = useCallback((column: string, order: string) => { 
     setSortItems(prev => prev.map(it => it.column === column ? { ...it, order } : it))
-  }, []);
+  }, [])
+
   const onRemove = useCallback((column: string) => {
     setSortItems(prev => prev.map(it => it.column === column ? {...it, chosen: false} : it))
   }, [])
+
   const onChosen = useCallback((column: string) => {
     setSortItems(prev => prev.map(it => it.column === column ? {...it, chosen: true} : it))
   }, [])
+
+  const onApplySort = () => {
+    params.delete(sortKey);
+    sortItems.forEach(item => {
+      params.append(sortKey, toSortParam(item))
+    })
+    replace(`${pathname}?${params.toString()}`);
+  }
+
+  //debug:
+  console.log("sortParams: ", sortParams);
 
   return (
     <DropdownMenu>
@@ -75,7 +125,7 @@ export function SortDropdownMenu() {
       >
         <div>
           {
-            choosableColumns.length === 4 ?
+            choosableColumns.length === 6 ?
               <div className="p-3">
                 <p className="text-sm font-semibold text-muted-foreground mb-1.5">Chưa có cách sắp xếp nào được áp dụng</p>
                 <p className="text-xs text-muted-foreground">Thêm một tiêu chí sắp xếp phía dưới để sắp xếp dữ liệu hoạt động</p>
@@ -92,10 +142,10 @@ export function SortDropdownMenu() {
                     items={sortItems}
                     strategy={verticalListSortingStrategy}
                   >
-                    {sortItems.map((item, _) => item.chosen &&
+                    {sortItems.map((item, index) => item.chosen &&
                       <SortItemRow 
                         key={item.id} 
-                        itemIndex={sortItems.findIndex(c => item.id === c.id)} 
+                        itemIndex={index} 
                         item={item} 
                         onOrderChange={onOrderChange}
                         onRemove={onRemove}
@@ -133,7 +183,9 @@ export function SortDropdownMenu() {
                   {item.column === "id" && "Mã"}
                   {item.column === "date" && "Ngày"}
                   {item.column === "time" && "Giờ"}
+                  {item.column === "product" && "Sản phẩm"}
                   {item.column === "type" && "Loại"}
+                  {item.column === "by" && "Phương thức"}
                 </DropdownMenuItem>)}
             </DropdownMenuContent>
           </DropdownMenu>
@@ -141,7 +193,8 @@ export function SortDropdownMenu() {
             className="text-xs h-fit py-1 rounded-sm cursor-pointer"
             variant="outline"
             size="sm"
-            disabled={choosableColumns.length === 4}
+            disabled={choosableColumns.length === 6}
+            onClick={onApplySort}
           >
             Áp dụng cách sắp xếp
           </Button>
