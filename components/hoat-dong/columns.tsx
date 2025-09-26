@@ -25,23 +25,10 @@ function SortDropdown({
     context === "checkout" ? "checkout_sort" :
       "sort";
   const sortParams = params.getAll(sortKey);
-  const sortItems = sortParams.length !== 0 ? deserializeSortParam(sortParams) : defaultSortItems;
+  const sortItem = deserializeSortParam(sortParams).find(item => item.column === column);
   const pathname = usePathname();
   const { replace } = useRouter();
 
-  const onSelect = (order: string) => {
-    sortItems.forEach(item => {
-      if (item.column === column) {
-        item.order = order;
-        item.chosen = true;
-      }
-    })
-    params.delete(sortKey);
-    sortItems.forEach(item => {
-      params.append(sortKey, toSortParam(item))
-    })
-    replace(`${pathname}?${params.toString()}`);
-  } 
   
   return (
     <DropdownMenu>
@@ -61,14 +48,14 @@ function SortDropdown({
       >
         <DropdownMenuItem 
           className="text-xs text-muted-foreground"
-          onClick={() => onSelect("asc")}
+          // onClick={() => onSelect("asc")}
         >
           <ArrowUp />
           Sắp xếp tăng dần
         </DropdownMenuItem>
         <DropdownMenuItem 
           className="text-xs text-muted-foreground"
-          onClick={() => onSelect("des")}
+          // onClick={() => onSelect("des")}
         >
           <ArrowDown />
           Sắp xếp giảm dần
@@ -84,7 +71,7 @@ export const columns: ColumnDef<Activity>[] = [
     header: () =>
       <div className="w-full flex items-center justify-between">
         <span>Mã</span>
-        <SortDropdown column="id" />
+        {/* <SortDropdown column="id" /> */}
       </div>,
   },
   {
@@ -92,7 +79,7 @@ export const columns: ColumnDef<Activity>[] = [
     header: () =>
       <div className="w-full flex items-center justify-between">
         <span>Ngày</span>
-        <SortDropdown column="date" />
+        {/* <SortDropdown column="date" /> */}
       </div>,
   },
   {
@@ -100,7 +87,7 @@ export const columns: ColumnDef<Activity>[] = [
     header: () =>
       <div className="w-full flex items-center justify-between">
         <span>Giờ</span>
-        <SortDropdown column="time" />
+        {/* <SortDropdown column="time" /> */}
       </div>,
   },
   {
@@ -108,7 +95,7 @@ export const columns: ColumnDef<Activity>[] = [
     header: () =>
       <div className="w-full flex items-center justify-between">
         <span>Sản phẩm</span>
-        <SortDropdown column="product" />
+        {/* <SortDropdown column="product" /> */}
       </div>
   },
   {
@@ -116,7 +103,7 @@ export const columns: ColumnDef<Activity>[] = [
     header: () =>
       <div className="w-full flex items-center justify-between">
         <span>Loại</span>
-        <SortDropdown column="type" />
+        {/* <SortDropdown column="type" /> */}
       </div>
   },
   {
@@ -124,18 +111,19 @@ export const columns: ColumnDef<Activity>[] = [
     header: () =>
       <div className="w-full flex items-center justify-between">
         <span>Phương thức</span>
-        <SortDropdown column="by" />
+        {/* <SortDropdown column="by" /> */}
       </div>
   }
 ]
 
-export const columns_seperated = (context: string): ColumnDef<Activity>[] => ([
+export const columns_seperated = (context: string): ColumnDef<Activity>[] => {  
+  return [
   {
     accessorKey: "id",
     header: () =>
       <div className="w-full flex items-center justify-between">
         <span>Mã</span>
-        <SortDropdown context={context} column="id" />
+        {/* <SortDropdown context={context} column="id" /> */}
       </div>,
   },
   {
@@ -143,7 +131,7 @@ export const columns_seperated = (context: string): ColumnDef<Activity>[] => ([
     header: () =>
       <div className="w-full flex items-center justify-between">
         <span>Ngày</span>
-        <SortDropdown context={context} column="date" />
+        {/* <SortDropdown context={context} column="date" /> */}
       </div>,
   },
   {
@@ -151,7 +139,7 @@ export const columns_seperated = (context: string): ColumnDef<Activity>[] => ([
     header: () =>
       <div className="w-full flex items-center justify-between">
         <span>Giờ</span>
-        <SortDropdown context={context} column="time" />
+        {/* <SortDropdown context={context} column="time" /> */}
       </div>,
   },
   {
@@ -159,7 +147,7 @@ export const columns_seperated = (context: string): ColumnDef<Activity>[] => ([
     header: () =>
       <div className="w-full flex items-center justify-between">
         <span>Sản phẩm</span>
-        <SortDropdown context={context} column="product" />
+        {/* <SortDropdown context={context} column="product" /> */}
       </div>
   },
   {
@@ -167,7 +155,7 @@ export const columns_seperated = (context: string): ColumnDef<Activity>[] => ([
     header: () =>
       <div className="w-full flex items-center justify-between">
         <span>Phương thức</span>
-        <SortDropdown context={context} column="by" />
+        {/* <SortDropdown context={context} column="by" /> */}
       </div>
   }
-])
+]}
