@@ -24,12 +24,13 @@ import { SortItem } from "./types"
 import { v4 as uuidv4 } from 'uuid'
 import { TableContext } from "./data-table"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import { cn } from "@/lib/utils"
 
 function toSortParam(item: SortItem): string {
   return `${item.column}:${item.order}:${item.chosen}`;
 }
 
-let defaultSortItems = [
+export let defaultSortItems = [
   { id: "a", column: "id", order: "asc", chosen: false },
   { id: "b", column: "date", order: "asc", chosen: false },
   { id: "c", column: "time", order: "asc", chosen: false },
@@ -114,9 +115,20 @@ export function SortDropdownMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button className="text-xs h-fit py-1 rounded-sm cursor-pointer" variant="ghost" size="sm">
-          <ArrowUpDown className="text-muted-foreground size-[14px]" />
+        <Button 
+          className={cn("text-xs h-fit py-1 rounded-sm cursor-pointer", 
+            sortParams.length > 0 && "text-trongkho-foreground dark:hover:text-trongkho-foreground dark:hover:bg-trongkho-foreground/10"
+          )}
+          variant="ghost" 
+          size="sm"
+        >
+          <ArrowUpDown 
+            className={cn("text-muted-foreground size-[14px]",
+              sortParams.length > 0 && "text-trongkho-foreground"
+            )} 
+          />
           Sắp xếp
+          {sortParams.length !== 0 && <span  className="text-trongkho-foreground">({6 - choosableColumns.length})</span>}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
